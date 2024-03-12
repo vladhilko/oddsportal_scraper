@@ -28,7 +28,9 @@ module OddsportalScraper
           base_url BASE_URL
           path "/#{sport}/#{country}"
 
-          leagues({ css: "td a[foo='f']" }, :list)
+          leagues({ css: "ul li a.text-black-main" }, :list) do |leagues|
+            leagues.map { |s| s.match(/^(.*?)\s*\(/)[1] }
+          end
         end
       end
 
