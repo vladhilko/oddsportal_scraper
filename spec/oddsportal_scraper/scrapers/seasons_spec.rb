@@ -14,6 +14,7 @@ RSpec.describe OddsportalScraper::Scrapers::Seasons do
 
       it 'returns all seasons available for this sport, country and league' do
         expect(subject).to contain_exactly(
+          '2023/2024',
           '2022/2023',
           '2021/2022',
           '2020/2021',
@@ -51,6 +52,7 @@ RSpec.describe OddsportalScraper::Scrapers::Seasons do
 
       it 'returns all seasons available for this sport, country and league' do
         expect(subject).to contain_exactly(
+          '2023/2024',
           '2022/2023',
           '2021/2022',
           '2020/2021',
