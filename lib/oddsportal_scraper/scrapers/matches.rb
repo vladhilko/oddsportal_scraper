@@ -39,18 +39,6 @@ module OddsportalScraper
 
       private
 
-      def page_does_not_exist?(response)
-        response.css('#col-content h1').text == 'Page not found' &&
-          response.css('#col-content p').text == 'This page not exist on OddsPortal.com!'
-      end
-
-      def no_odds_available_for_the_season?(response)
-        response.css('div.message-info ul li div.cms').last.text.include?(
-          'Unfortunately, '\
-          'no matches can be displayed because there are no odds available from your selected bookmakers.'
-        )
-      end
-
       def parse_page(season_starts:, season_ends:)
         scroll_till_the_end
 
