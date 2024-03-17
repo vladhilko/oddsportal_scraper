@@ -19,3 +19,7 @@
 ## [0.2.3] - 2022-11-22
 
 - Return empty response for season without bookmakers odds.
+
+## [1.0.0] - 2024-03-17
+
+- Rewrite parses according to new site style.
