@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe OddsportalScraper::Scrapers::Matches do
-  describe '.by_sport_and_country_and_league_and_season' do
+  describe '.by_sport_and_country_and_league_and_season', with_chromedriver: true do
     subject { described_class.by_sport_and_country_and_league_and_season(sport_name, country, league, season) }
 
     context 'when choosen sport: `soccer`, country: `England`, league: `Premier League` and season: `2007-2008`' do
