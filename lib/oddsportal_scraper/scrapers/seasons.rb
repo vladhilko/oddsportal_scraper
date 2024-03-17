@@ -29,8 +29,8 @@ module OddsportalScraper
           base_url BASE_URL
           path "/#{sport}/#{country}/#{league}/results"
 
-          seasons({ css: 'ul.main-filter li span strong a' }, :list) do |seasons|
-            seasons.delete_if { ['NEXT MATCHES', 'OUTRIGHTS', 'RESULTS', 'STANDINGS'].include?(_1) }
+          seasons({ css: 'div > a' }, :list) do |seasons|
+            seasons.reject(&:empty?)
           end
         end
       end
