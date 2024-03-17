@@ -25,6 +25,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 Based on `wombat` gem https://github.com/felipecsl/wombat and `kimurai` gem.
 
+```rb
 OddsportalScraper.countries(sport: 'soccer')
 
 # [
