@@ -42,16 +42,14 @@ module OddsportalScraper
       def parse_page(season_starts:, season_ends:)
         scroll_till_the_end
 
-        elements_with_dash = browser.find_all(:xpath, "//a[contains(text(), '–')]")
-        matches = []
-        elements_with_dash.each do |element|
-          parent_with_class = element.find(:xpath, './ancestor::div[contains(@class, "group") and contains(@class, "flex")]')
-          date = parent_with_class.find_all(:xpath, "./ancestor::*/preceding::*[contains(text(), #{season_starts}) or contains(text(), #{season_ends})][1]").map(&:text).last
-          match_row = parent_with_class.find_all('.//*[not(*) and normalize-space()]')
+        match_result_with_dash = browser.find_all(:xpath, "//a[contains(text(), '–')]")
+        match_result_with_dash.map do |element|
+          match_result_element = element.find(:xpath, './ancestor::div[contains(@class, "group") and contains(@class, "flex")]')
+          date = match_result_element.find_all(:xpath, "./ancestor::*/preceding::*[contains(text(), #{season_starts}) or contains(text(), #{season_ends})][1]").map(&:text).last
+          match_row = match_result_element.find_all('.//*[not(*) and normalize-space()]')
 
-          matches << match_row_hash(match_row.map(&:text), date: date)
+          match_row_hash(match_row.map(&:text), date: date)
         end
-        matches
       end
 
       def scroll_till_the_end
