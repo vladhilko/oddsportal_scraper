@@ -26,18 +26,15 @@ module OddsportalScraper
       def parse(response, url:, data:, **)
         browser.visit("#{url}#/page/#{1}/")
         parse_page(season_starts: data[:season_starts], season_ends: data[:season_ends])
+        last_page_num = response.css('div.pagination a.pagination-link').map(&:text).select { _1.match?(/[0-9]+/) }.last.to_i
 
+        all_season_matches = []
 
-        # return [] if page_does_not_exist?(response) || no_odds_available_for_the_season?(response)
-
-        # last_page_num = response.css('div#pagination a').last.attributes.fetch('href').value.split('/').last.to_i
-        # all_season_matches = []
-
-        # (1..last_page_num).each do |page_number|
-        #   browser.visit("#{url}#/page/#{page_number}/")
-        #   all_season_matches.concat(parse_page_with_matches)
-        # end
-        # all_season_matches
+        (1..last_page_num).each do |page_number|
+          browser.visit("#{url}#/page/#{page_number}/")
+          all_season_matches.concat(parse_page(season_starts: data[:season_starts], season_ends: data[:season_ends]))
+        end
+        all_season_matches
       end
 
       private
@@ -74,6 +71,8 @@ module OddsportalScraper
         sleep 1
         browser.execute_script("window.scrollBy(0,10000)")
         sleep 1
+        browser.execute_script("window.scrollBy(0,10000)")
+        sleep 0.5
       end
 
       def match_row_hash(match_row, date:)
@@ -83,9 +82,9 @@ module OddsportalScraper
           participants: "#{match_row[1]} - #{match_row[6]}",
           score: "#{match_row[3]}:#{match_row[5]}",
           odds: {
-            home_win: match_row[9],
-            draw: match_row[10],
-            away_win: match_row[11]
+            home_win: match_row[8],
+            draw: match_row[9],
+            away_win: match_row[10]
           }
         }
       end
