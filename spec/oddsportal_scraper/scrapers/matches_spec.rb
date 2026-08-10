@@ -3,121 +3,146 @@
 require 'spec_helper'
 
 RSpec.describe OddsportalScraper::Scrapers::Matches do
-  describe '.by_sport_and_country_and_league_and_season', with_chromedriver: true do
-    subject { described_class.by_sport_and_country_and_league_and_season(sport_name, country, league, season) }
-
-    context 'when choosen sport: `soccer`, country: `England`, league: `Premier League` and season: `2007-2008`' do
-      let(:sport_name) { 'soccer' }
-      let(:country) { 'England' }
-      let(:league) { 'Premier League' }
-      let(:season) { '2007-2008' }
-
-      let(:expected_response) { parse_json_fixture('results/soccer/england/premier-league/2007-2008/matches.json') }
-
-      it 'returns all mathes available for this sport, country, league and season' do
-        actual_response = subject
-        expect(actual_response.size).to eq(expected_response.size)
-        actual_response.each_with_index do |actual_match, index|
-          expected_match = expected_response[index]
-          expect(actual_match[:match_date]).to eq(expected_match[:match_date])
-          expect(actual_match[:participants]).to eq(expected_match[:participants])
-          expect(actual_match[:score]).to eq(expected_match[:score])
-
-          actual_odds = actual_match[:odds]
-          expected_odds = expected_match[:odds]
-
-          expect(actual_odds[:home_win].to_f).to be_within(1).of(expected_odds[:home_win].to_f)
-          expect(actual_odds[:draw].to_f).to be_within(1).of(expected_odds[:draw].to_f)
-          expect(actual_odds[:away_win].to_f).to be_within(1).of(expected_odds[:away_win].to_f)
-
-          actual_time = Time.parse(actual_match[:match_time])
-          expected_time = Time.parse(expected_match[:match_time])
-
-          expect(actual_time).to be_within(1.hour).of(expected_time)
-        end
-      end
+  describe '.by_sport_and_country_and_league_and_season' do
+    subject(:matches) do
+      described_class.by_sport_and_country_and_league_and_season(
+        'soccer',
+        'England',
+        'Premier League',
+        '2019/2020'
+      )
     end
 
-    context 'when choosen sport: `soccer`, country: `England`, league: `Premier League` and season: `2019-2020`' do
-      let(:sport_name) { 'soccer' }
-      let(:country) { 'England' }
-      let(:league) { 'Premier League' }
-      let(:season) { '2019-2020' }
-
-      let(:expected_response) { parse_json_fixture('results/soccer/england/premier-league/2019-2020/matches.json') }
-
-      it 'returns all mathes available for this sport, country, league and season' do
-        actual_response = subject
-        expect(actual_response.size).to eq(expected_response.size)
-        actual_response.each_with_index do |actual_match, index|
-          expected_match = expected_response[index]
-          expect(actual_match[:match_date]).to eq(expected_match[:match_date])
-          expect(actual_match[:participants]).to eq(expected_match[:participants])
-          expect(actual_match[:score]).to eq(expected_match[:score])
-
-          actual_odds = actual_match[:odds]
-          expected_odds = expected_match[:odds]
-
-          expect(actual_odds[:home_win].to_f).to be_within(1).of(expected_odds[:home_win].to_f)
-          expect(actual_odds[:draw].to_f).to be_within(1).of(expected_odds[:draw].to_f)
-          expect(actual_odds[:away_win].to_f).to be_within(1).of(expected_odds[:away_win].to_f)
-
-          actual_time = Time.parse(actual_match[:match_time])
-          expected_time = Time.parse(expected_match[:match_time])
-
-          expect(actual_time).to be_within(1.hour).of(expected_time)
-        end
-      end
+    before do
+      stub_request(:get, 'https://www.oddsportal.com/football/')
+        .to_return(status: 200, body: read_fixture('pages/football.html'))
+      stub_request(:get, 'https://www.oddsportal.com/football/england/')
+        .to_return(status: 200, body: read_fixture('pages/england.html'))
+      stub_request(:get, 'https://www.oddsportal.com/football/england/premier-league/results/')
+        .to_return(status: 200, body: read_fixture('pages/premier_league_results.html'))
+      stub_request(:get, 'https://www.oddsportal.com/football/england/premier-league-2019-2020/results/')
+        .to_return(status: 200, body: read_fixture('pages/premier_league_2019_2020_results.html'))
+      stub_request(:get, 'https://backend.oddsportal.com/ajax-sport-country-tournament-archive_/1/test-token/1/0/')
+        .to_return(status: 200, body: read_fixture('archive/page_1.enc'))
+      stub_request(:get, 'https://backend.oddsportal.com/ajax-sport-country-tournament-archive_/1/test-token/1/0/page/2/')
+        .to_return(status: 200, body: read_fixture('archive/page_2.enc'))
     end
 
-    context 'when choosen sport: `soccer`, country: `England`, league: `Championship` and season: `2019/2020`' do
-      let(:sport_name) { 'soccer' }
-      let(:country) { 'England' }
-      let(:league) { 'Championship' }
-      let(:season) { '2019/2020' }
-
-      let(:expected_response) { parse_json_fixture('results/soccer/england/championship/2019-2020/matches.json') }
-
-      it 'returns all mathes available for this sport, country, league and season' do
-        actual_response = subject
-        expect(actual_response.size).to eq(expected_response.size)
-        actual_response.each_with_index do |actual_match, index|
-          expected_match = expected_response[index]
-          expect(actual_match[:match_date]).to eq(expected_match[:match_date])
-          expect(actual_match[:participants]).to eq(expected_match[:participants])
-          expect(actual_match[:score]).to eq(expected_match[:score])
-
-          actual_odds = actual_match[:odds]
-          expected_odds = expected_match[:odds]
-
-          expect(actual_odds[:home_win].to_f).to be_within(1).of(expected_odds[:home_win].to_f)
-          expect(actual_odds[:draw].to_f).to be_within(1).of(expected_odds[:draw].to_f)
-          expect(actual_odds[:away_win].to_f).to be_within(1).of(expected_odds[:away_win].to_f)
-
-          actual_time = Time.parse(actual_match[:match_time])
-          expected_time = Time.parse(expected_match[:match_time])
-
-          expect(actual_time).to be_within(1.hour).of(expected_time)
-        end
-      end
+    it 'resolves the season, decodes the archive, paginates, and preserves the public response shape' do
+      expect(matches).to eq(
+        [
+          {
+            match_date: '26 Jul 2020',
+            match_time: '17:00',
+            participants: 'Arsenal - Watford',
+            score: '3:2',
+            odds: { home_win: '2.00', draw: '3.80', away_win: '3.50' }
+          },
+          {
+            match_date: '26 Jul 2020',
+            match_time: '17:00',
+            participants: 'Chelsea - Wolves',
+            score: 'canc.',
+            odds: { home_win: nil, draw: nil, away_win: nil }
+          },
+          {
+            match_date: '25 Jul 2020',
+            match_time: '17:00',
+            participants: 'Manchester City - Arsenal',
+            score: '3:0',
+            odds: { home_win: nil, draw: nil, away_win: nil }
+          }
+        ]
+      )
     end
 
-    context 'when the given league does not exist' do
-      let(:sport_name) { 'soccer' }
-      let(:country) { 'Switzerland' }
-      let(:league) { 'Promotion League' }
-      let(:season) { '2012/2013' }
+    it 'uses the current football route for the soccer API' do
+      matches
+      expect(WebMock).to have_requested(:get, 'https://www.oddsportal.com/football/')
+    end
+
+    context 'when the season has no odds' do
+      before do
+        stub_request(:get, 'https://www.oddsportal.com/football/england/premier-league-2019-2020/results/')
+          .to_return(
+            status: 200,
+            body: '<html><body><div data-testid="null-result-message">No matches available</div></body></html>'
+          )
+      end
 
       it { is_expected.to eq([]) }
     end
 
-    context 'when there is no odds available for the given season' do
-      let(:sport_name) { 'soccer' }
-      let(:country) { 'England' }
-      let(:league) { 'Premier League' }
-      let(:season) { '1998/1999' }
+    context 'when the archive explicitly reports no available odds' do
+      before do
+        stub_request(:get, 'https://www.oddsportal.com/football/england/premier-league-2019-2020/results/')
+          .to_return(status: 200, body: read_fixture('pages/premier_league_2019_2020_results.html'))
+        stub_request(:get, 'https://backend.oddsportal.com/ajax-sport-country-tournament-archive_/1/test-token/1/0/')
+          .to_return(status: 200, body: read_fixture('archive/empty.enc'))
+      end
 
       it { is_expected.to eq([]) }
+    end
+
+    context 'when the first archive response is transiently empty' do
+      before do
+        season_page = read_fixture('pages/premier_league_2019_2020_results.html')
+        retry_season_page = season_page.sub('/1/test-token/1/0/', '/1/retry-token/1/0/')
+
+        stub_request(:get, 'https://www.oddsportal.com/football/england/premier-league-2019-2020/results/')
+          .to_return(
+            { status: 200, body: season_page },
+            { status: 200, body: retry_season_page }
+          )
+        stub_request(:get, 'https://backend.oddsportal.com/ajax-sport-country-tournament-archive_/1/test-token/1/0/')
+          .to_return(status: 200, body: read_fixture('archive/empty.enc'))
+        stub_request(:get, 'https://backend.oddsportal.com/ajax-sport-country-tournament-archive_/1/retry-token/1/0/')
+          .to_return(status: 200, body: read_fixture('archive/page_1.enc'))
+        stub_request(:get, 'https://backend.oddsportal.com/ajax-sport-country-tournament-archive_/1/retry-token/1/0/page/2/')
+          .to_return(status: 200, body: read_fixture('archive/page_2.enc'))
+      end
+
+      it 'refetches the season page and accepts a later non-empty archive' do
+        expect(matches).to contain_exactly(
+          hash_including(participants: 'Arsenal - Watford'),
+          hash_including(participants: 'Chelsea - Wolves'),
+          hash_including(participants: 'Manchester City - Arsenal')
+        )
+        expect(WebMock).to have_requested(
+          :get,
+          'https://www.oddsportal.com/football/england/premier-league-2019-2020/results/'
+        ).twice
+      end
+    end
+
+    context 'when the archive response is malformed' do
+      before do
+        stub_request(:get, 'https://backend.oddsportal.com/ajax-sport-country-tournament-archive_/1/test-token/1/0/')
+          .to_return(status: 200, body: 'not-an-archive')
+      end
+
+      it 'raises a protocol error' do
+        expect { matches }.to raise_error(OddsportalScraper::ProtocolError, /decode/)
+      end
+    end
+
+    context 'when the browser fallback is explicitly enabled', :browser_fallback do
+      before do
+        allow(OddsportalScraper::BrowserFallback).to receive(:enabled?).and_return(true)
+        allow(OddsportalScraper::BrowserFallback::Matches).to receive(:call).and_return([{ fallback: true }])
+        stub_request(:get, 'https://www.oddsportal.com/football/england/premier-league-2019-2020/results/')
+          .to_return(status: 200, body: '<html><body>unexpected successful response</body></html>')
+      end
+
+      it 'delegates only after the HTTP protocol fails' do
+        expect(matches).to eq([{ fallback: true }])
+        expect(OddsportalScraper::BrowserFallback::Matches).to have_received(:call).with(
+          sport: 'soccer',
+          country: 'England',
+          league: 'Premier League',
+          season: '2019/2020'
+        )
+      end
     end
   end
 end

@@ -4,192 +4,38 @@ require 'spec_helper'
 
 RSpec.describe OddsportalScraper::Scrapers::Countries do
   describe '.by_sport' do
-    subject { described_class.by_sport(sport_name) }
+    subject(:countries) { described_class.by_sport(sport) }
 
-    context 'when choosen sport is `soccer`', vcr: 'oddsportal/countries/football' do
-      let(:sport_name) { 'soccer' }
+    let(:sport) { 'soccer' }
 
-      it 'returns all countries available for this sport' do
-        expect(subject).to contain_exactly(
-          'Africa',
-          'Algeria',
-          'Argentina',
-          'Armenia',
-          'Asia',
-          'Australia',
-          'Austria',
-          'Azerbaijan',
-          'Belarus',
-          'Belgium',
-          'Bolivia',
-          'Bosnia and Herzegovina',
-          'Botswana',
-          'Brazil',
-          'Bulgaria',
-          'Chile',
-          'Colombia',
-          'Costa Rica',
-          'Croatia',
-          'Cyprus',
-          'Czech Republic',
-          'Denmark',
-          'Ecuador',
-          'Egypt',
-          'England',
-          'Estonia',
-          'Europe',
-          'France',
-          'Georgia',
-          'Germany',
-          'Ghana',
-          'Greece',
-          'Guatemala',
-          'Honduras',
-          'Hong Kong',
-          'Hungary',
-          'India',
-          'Indonesia',
-          'Iran',
-          'Iraq',
-          'Ireland',
-          'Israel',
-          'Italy',
-          'Jamaica',
-          'Japan',
-          'Kazakhstan',
-          'Kosovo',
-          'Kuwait',
-          'Lithuania',
-          'Mauritania',
-          'Mexico',
-          'Montenegro',
-          'Morocco',
-          'Netherlands',
-          'Nicaragua',
-          'Nigeria',
-          'North & Central America',
-          'Northern Ireland',
-          'Norway',
-          'Panama',
-          'Paraguay',
-          'Peru',
-          'Poland',
-          'Portugal',
-          'Qatar',
-          'Romania',
-          'Russia',
-          'San Marino',
-          'Saudi Arabia',
-          'Scotland',
-          'Serbia',
-          'Slovakia',
-          'Slovenia',
-          'South Africa',
-          'South America',
-          'South Korea',
-          'Spain',
-          'Sweden',
-          'Switzerland',
-          'Tanzania',
-          'Thailand',
-          'Turkey',
-          'USA',
-          'Uganda',
-          'Ukraine',
-          'United Arab Emirates',
-          'Uruguay',
-          'Vietnam',
-          'Wales',
-          'World'
-        )
-      end
+    before do
+      stub_request(:get, 'https://www.oddsportal.com/football/')
+        .to_return(status: 200, body: read_fixture('pages/football.html'))
     end
 
-    context 'when choosen sport is `basketball`', vcr: 'oddsportal/countries/basketball' do
-      let(:sport_name) { 'basketball' }
-
-      it 'returns all countries available for this sport' do
-        expect(subject).to contain_exactly(
-          'Africa',
-          'Argentina',
-          'Asia',
-          'Australia',
-          'Bahrain',
-          'Brazil',
-          'Bulgaria',
-          'Chile',
-          'China',
-          'Croatia',
-          'Czech Republic',
-          'Denmark',
-          'Europe',
-          'Finland',
-          'France',
-          'Germany',
-          'Greece',
-          'Hungary',
-          'Iceland',
-          'Israel',
-          'Italy',
-          'Japan',
-          'Lebanon',
-          'Lithuania',
-          'Mexico',
-          'Philippines',
-          'Poland',
-          'Portugal',
-          'Russia',
-          'Slovakia',
-          'Slovenia',
-          'South Korea',
-          'Spain',
-          'Sweden',
-          'Switzerland',
-          'Taiwan',
-          'Turkey',
-          'United Kingdom',
-          'Uruguay',
-          'USA',
-          'World'
-        )
-      end
+    it 'translates soccer to the current football route and returns visible countries' do
+      expect(countries).to contain_exactly('England', 'Spain')
+      expect(WebMock).to have_requested(:get, 'https://www.oddsportal.com/football/')
     end
 
-    context 'when choosen sport is `hockey`', vcr: 'oddsportal/countries/hockey' do
-      let(:sport_name) { 'hockey' }
-
-      it 'returns all countries available for this sport' do
-        expect(subject).to contain_exactly(
-          'Austria',
-          'Belarus',
-          'Canada',
-          'Czech Republic',
-          'Denmark',
-          'Europe',
-          'Finland',
-          'France',
-          'Germany',
-          'Hungary',
-          'Italy',
-          'Latvia',
-          'Norway',
-          'Poland',
-          'Russia',
-          'Slovakia',
-          'Sweden',
-          'Switzerland',
-          'USA',
-          'Ukraine',
-          'United Kingdom',
-          'World'
-        )
+    context 'when the sport page is not found' do
+      before do
+        stub_request(:get, 'https://www.oddsportal.com/football/')
+          .to_return(status: 404, body: '')
       end
+
+      it { is_expected.to eq([]) }
     end
 
-    context 'when choosen sport is invalid', vcr: 'oddsportal/countries/invalid' do
-      let(:sport_name) { 'invalid' }
+    context 'when a successful page has no country links' do
+      before do
+        stub_request(:get, 'https://www.oddsportal.com/football/')
+          .to_return(status: 200, body: '<html><body>challenge</body></html>')
+      end
 
-      it { is_expected.to be_empty }
+      it 'raises a protocol error instead of silently succeeding' do
+        expect { countries }.to raise_error(OddsportalScraper::ProtocolError, /no country links/)
+      end
     end
   end
 end

@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 require_relative 'oddsportal_scraper/version'
+require_relative 'oddsportal_scraper/errors'
+require_relative 'oddsportal_scraper/http_client'
+require_relative 'oddsportal_scraper/archive_decoder'
+require_relative 'oddsportal_scraper/browser_fallback'
 require_relative 'oddsportal_scraper/scrapers/base'
 require_relative 'oddsportal_scraper/scrapers/countries'
 require_relative 'oddsportal_scraper/scrapers/leagues'
@@ -10,15 +14,8 @@ require_relative 'oddsportal_scraper/scrapers/matches'
 module OddsportalScraper
   ROOT_DIR = File.expand_path('..', __dir__)
 
-  class Error < StandardError; end
-
   class << self
-
-    def sport_names
-      Scrapers::SportNames.call
-    end
-
-    def countries(sport: sport_name)
+    def countries(sport: 'soccer')
       Scrapers::Countries.by_sport(sport)
     end
 
@@ -33,6 +30,5 @@ module OddsportalScraper
     def matches(sport:, country:, league:, season:)
       Scrapers::Matches.by_sport_and_country_and_league_and_season(sport, country, league, season)
     end
-
   end
 end

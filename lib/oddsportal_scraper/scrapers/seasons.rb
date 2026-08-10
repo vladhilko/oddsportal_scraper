@@ -3,38 +3,39 @@
 module OddsportalScraper
   module Scrapers
     class Seasons < Base
-
       def self.by_sport_and_country_and_league(sport, country, league)
-        new(sport:, country:, league:).by_sport_and_country_and_league
+        new(sport:, country:, league:).call
       end
 
-      def initialize(sport:, country:, league:)
+      def initialize(sport:, country:, league:, http_client: HttpClient.new)
+        super(http_client:)
         @sport = sport
-        @country = country.downcase
-        @league = league.downcase.split(' ').join('-')
+        @country = country
+        @league = league
       end
 
-      def by_sport_and_country_and_league
-        raw_seasons_list_by(sport, country, league).fetch('seasons')
-      rescue Mechanize::ResponseCodeError
-        []
+      def call
+        country_document = country_page(sport)
+        return [] unless country_document
+
+        country_path = country_href(country_document, sport, country)
+        return [] unless country_path
+
+        country_document = fetch_document(country_path)
+        return [] unless country_document
+
+        league_path = league_href(country_document, sport, country, league)
+        return [] unless league_path
+
+        document = fetch_document(results_path(league_path))
+        return [] unless document
+
+        season_links(document).map { |link| link[:name] }
       end
 
       private
 
       attr_reader :sport, :country, :league
-
-      def raw_seasons_list_by(sport, country, league)
-        Wombat.crawl do
-          base_url BASE_URL
-          path "/#{sport}/#{country}/#{league}/results"
-
-          seasons({ css: 'div > a' }, :list) do |seasons|
-            seasons.reject(&:empty?)
-          end
-        end
-      end
-
     end
   end
 end

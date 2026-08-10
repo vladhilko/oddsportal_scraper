@@ -5,6 +5,10 @@ def parse_json_fixture(path, symbolize_names: true)
   JSON.parse(File.read(file_path), symbolize_names:)
 end
 
+def read_fixture(path)
+  File.read(File.join(fixture_path, path))
+end
+
 def fixture_path
   File.join(OddsportalScraper::ROOT_DIR, 'spec/fixtures')
 end
