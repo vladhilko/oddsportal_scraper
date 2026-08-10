@@ -1,0 +1,18 @@
+{
+  "s": 1,
+  "d": {
+    "total": 3,
+    "onePage": 2,
+    "page": 2,
+    "rows": [
+      {
+        "home-name": "Manchester City",
+        "away-name": "Arsenal",
+        "event-stage-name": "Finished",
+        "date-start-timestamp": 1595689200,
+        "result": "3:0",
+        "odds": []
+      }
+    ]
+  }
+}

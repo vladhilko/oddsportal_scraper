@@ -4,34 +4,34 @@ module OddsportalScraper
   module Scrapers
     class Leagues < Base
       def self.by_sport_and_country(sport, country)
-        new(sport:, country:).by_sport_and_country
+        new(sport:, country:).call
       end
 
-      def initialize(sport:, country:)
+      def initialize(sport:, country:, http_client: HttpClient.new)
+        super(http_client:)
         @sport = sport
-        @country = country.downcase
+        @country = country
       end
 
-      def by_sport_and_country
-        raw_leagues_list_by(sport, country).fetch('leagues')
-      rescue Mechanize::ResponseCodeError
-        []
+      def call
+        document = country_page(sport)
+        return [] unless document
+
+        country_path = country_href(document, sport, country)
+        return [] unless country_path
+
+        document = fetch_document(country_path)
+        return [] unless document
+
+        tournament_links(document, sport, country).filter_map do |link|
+          name = strip_count(link_text(link))
+          name unless name.empty?
+        end.uniq
       end
 
       private
 
       attr_reader :sport, :country
-
-      def raw_leagues_list_by(sport, country)
-        Wombat.crawl do
-          base_url BASE_URL
-          path "/#{sport}/#{country}"
-
-          leagues({ css: 'ul > li > a.text-black-main' }, :list) do |leagues|
-            leagues.map { |s| s.match(/^(.*?)\s*\(/)[1] }
-          end
-        end
-      end
     end
   end
 end

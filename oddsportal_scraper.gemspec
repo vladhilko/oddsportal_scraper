@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ['Vladislav Hilko']
   spec.email = ['vladislav.spawn@gmail.com']
 
-  spec.summary = 'Get football data from OddsPortal'
+  spec.summary = 'Read sports data from the current OddsPortal web application'
   spec.homepage = 'https://github.com/vladhilko/oddsportal_scraper'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 4.0.0'
@@ -33,10 +33,8 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'kimurai', '~> 2.2'
-  # Wombat 3.2+ requires mechanize 2.14, while Kimurai 2.2 requires
-  # mechanize 2.8.5 through capybara-mechanize.
-  spec.add_dependency 'wombat', '~> 3.0.0'
+  spec.add_dependency 'nokogiri', '~> 1.19'
+  spec.add_dependency 'tzinfo', '~> 2.0'
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

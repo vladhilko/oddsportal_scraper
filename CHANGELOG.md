@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## [2.0.0] - 2026-08-10
+
+- Replace the stale Wombat/Kimurai implementation with an HTTP-first adapter.
+- Parse the current OddsPortal link structure and encrypted archive endpoint.
+- Add retries, explicit transport/protocol errors, and an opt-in Selenium fallback.
+- Preserve the public countries, leagues, seasons, and matches API.
+
 ## [1.1.0] - 2026-08-09
 
 - Upgrade the supported Ruby runtime and scraper dependencies.

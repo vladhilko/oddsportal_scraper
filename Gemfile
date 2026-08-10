@@ -8,14 +8,10 @@ gemspec
 gem 'rake', '~> 13.0'
 
 group :development, :test do
-  gem 'pry'
   gem 'rspec', '~> 3.13'
-  gem 'rubocop', '~> 1.75'
-  gem 'rubocop-rspec', '~> 3.6'
+  gem 'rubocop', '~> 1.89'
+  gem 'rubocop-rspec', '~> 3.10'
   gem 'selenium-webdriver', '~> 4.27.0'
-  gem 'vcr', '~> 6.3'
-  gem 'webmock', '~> 3.25'
+  gem 'vcr', '~> 6.4'
+  gem 'webmock', '~> 3.26'
 end
-
-gem 'kimurai', '~> 2.2'
-gem 'wombat', '~> 3.0.0'

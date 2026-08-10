@@ -1,0 +1,30 @@
+{
+  "s": 1,
+  "d": {
+    "total": 3,
+    "onePage": 2,
+    "page": 1,
+    "rows": [
+      {
+        "home-name": "Arsenal",
+        "away-name": "Watford",
+        "event-stage-name": "Finished",
+        "date-start-timestamp": 1595775600,
+        "result": "3:2",
+        "odds": [
+          { "avgOdds": 2 },
+          { "avgOdds": 3.8 },
+          { "avgOdds": 3.5 }
+        ]
+      },
+      {
+        "home-name": "Chelsea",
+        "away-name": "Wolves",
+        "event-stage-name": "Canceled",
+        "date-start-timestamp": 1595775600,
+        "result": "",
+        "odds": []
+      }
+    ]
+  }
+}
