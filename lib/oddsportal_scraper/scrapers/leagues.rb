@@ -3,7 +3,6 @@
 module OddsportalScraper
   module Scrapers
     class Leagues < Base
-
       def self.by_sport_and_country(sport, country)
         new(sport:, country:).by_sport_and_country
       end
@@ -28,12 +27,11 @@ module OddsportalScraper
           base_url BASE_URL
           path "/#{sport}/#{country}"
 
-          leagues({ css: "ul > li > a.text-black-main" }, :list) do |leagues|
+          leagues({ css: 'ul > li > a.text-black-main' }, :list) do |leagues|
             leagues.map { |s| s.match(/^(.*?)\s*\(/)[1] }
           end
         end
       end
-
     end
   end
 end

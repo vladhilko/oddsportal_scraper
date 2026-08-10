@@ -3,7 +3,6 @@
 module OddsportalScraper
   module Scrapers
     class Countries < Base
-
       def self.by_sport(sport)
         new.by_sport(sport)
       end
@@ -22,12 +21,11 @@ module OddsportalScraper
           path "/#{sport}"
 
           countries({ css: 'div > a > span' }, :list) do |countries|
-            countries.map { _1.gsub(160.chr('UTF-8'), '') }
-                     .tap { _1.delete(sport.capitalize) }
+            countries.map { it.gsub(160.chr('UTF-8'), '') }
+                     .tap { it.delete(sport.capitalize) }
           end
         end
       end
-
     end
   end
 end

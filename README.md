@@ -1,15 +1,23 @@
 # OddsportalScraper
 
+Ruby gem for reading football countries, leagues, seasons, and matches from
+[OddsPortal](https://www.oddsportal.com/).
 
-Site https://www.oddsportal.com/
+The upgrade branch uses Ruby 4.0.6, Kimurai 2.2, and the newest Wombat
+release compatible with Kimurai (3.0.0). Wombat 3.2 requires a newer
+Mechanize major than Kimurai 2.2 currently permits.
 
 ## Preparation
 
-For Mac users:
+For macOS browser-based match tests, install ChromeDriver:
 
 ```rb
 brew install chromedriver
 ```
+
+The non-browser specs use VCR fixtures and do not require ChromeDriver. The
+default test task intentionally excludes live browser specs because OddsPortal
+can change historical bookmaker availability.
 
 ## Installation
 
@@ -20,6 +28,26 @@ Install the gem and add to the application's Gemfile by executing:
 If bundler is not being used to manage dependencies, install the gem by executing:
 
     $ gem install oddsportal_scraper
+
+For local development from this repository:
+
+```bash
+bundle install
+bundle exec rspec spec --tag ~@with_chromedriver
+bundle exec rubocop
+```
+
+Run the live Chrome/Kimurai integration specs separately:
+
+```bash
+bundle exec rake browser_spec
+```
+
+Run the full default task with:
+
+```bash
+bundle exec rake
+```
 
 ## Usage
 

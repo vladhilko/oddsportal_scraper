@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-09
+
+- Upgrade the supported Ruby runtime and scraper dependencies.
+- Remove the stale sport-names loader and production-only debug requires.
+
 ## [0.1.0] - 2022-10-26
 
 - Initial release

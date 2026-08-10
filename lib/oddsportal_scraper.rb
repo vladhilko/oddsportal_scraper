@@ -13,12 +13,7 @@ module OddsportalScraper
   class Error < StandardError; end
 
   class << self
-
-    def sport_names
-      Scrapers::SportNames.call
-    end
-
-    def countries(sport: sport_name)
+    def countries(sport: 'soccer')
       Scrapers::Countries.by_sport(sport)
     end
 
@@ -33,6 +28,5 @@ module OddsportalScraper
     def matches(sport:, country:, league:, season:)
       Scrapers::Matches.by_sport_and_country_and_league_and_season(sport, country, league, season)
     end
-
   end
 end
